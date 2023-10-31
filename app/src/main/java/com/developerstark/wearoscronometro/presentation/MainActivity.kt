@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -39,7 +40,10 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.TimeText
+import androidx.wear.compose.material.TimeTextDefaults
 import com.developerstark.wearoscronometro.R
 import com.developerstark.wearoscronometro.presentation.theme.WearOsCronometroTheme
 
@@ -47,16 +51,28 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val viewModel= viewModel<StopWatchViewModel> ()
+            val viewModel = viewModel<StopWatchViewModel>()
             val timerState by viewModel.timerState.collectAsStateWithLifecycle()
             val stopWatchText by viewModel.stopWatchtext.collectAsStateWithLifecycle()
-StopWatch(
-    state = timerState,
-    text = stopWatchText,
-    onToggleRunning = viewModel::toggleIsRunning,
-    onReset = viewModel::resetTimer,
-    modifier=Modifier.fillMaxSize()
-    )
+
+            Scaffold(
+                timeText = {
+                    TimeText(
+                        timeTextStyle = TimeTextDefaults.timeTextStyle(
+                            fontSize = 10.sp
+                        )
+                    )
+                }
+            ) {
+                StopWatch(
+                    state = timerState,
+                    text = stopWatchText,
+                    onToggleRunning = viewModel::toggleIsRunning,
+                    onReset = viewModel::resetTimer,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
         }
     }
 }
@@ -65,12 +81,12 @@ StopWatch(
 private fun StopWatch(
     state: TimerState,
     text: String,
-    onToggleRunning: ()->Unit,
-    onReset:()-> Unit,
-    modifier: Modifier=Modifier
-){
+    onToggleRunning: () -> Unit,
+    onReset: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier=modifier,
+        modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -83,19 +99,19 @@ private fun StopWatch(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row(
-            modifier= Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
             Button(onClick = onToggleRunning) {
                 Icon(
-                    imageVector = if (state==TimerState.RUNNING){
+                    imageVector = if (state == TimerState.RUNNING) {
                         Icons.Default.Pause
-                    }else{
-                         Icons.Default.PlayArrow
-                    }
-                    , contentDescription =null
+                    } else {
+                        Icons.Default.PlayArrow
+                    }, contentDescription = null
                 )
             }
+            Spacer(modifier = Modifier.width(8.dp))
             Button(
                 onClick = onReset,
                 enabled = state != TimerState.RESET,
@@ -104,8 +120,7 @@ private fun StopWatch(
                 )
             ) {
                 Icon(
-                    imageVector = Icons.Default.Stop
-                    , contentDescription =null
+                    imageVector = Icons.Default.Stop, contentDescription = null
                 )
             }
 
